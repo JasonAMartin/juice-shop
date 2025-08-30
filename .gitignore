@@ -1,3 +1,7 @@
+.history
+.code
+.intellij
+
 # App
 node_modules/
 juiceshop.sqlite
