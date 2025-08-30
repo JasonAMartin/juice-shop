@@ -56,3 +56,30 @@ jobs:
       #   with:
       #     name: coverage-report
       #     path: coverage/
+ # Second job: CodeQL security scanning
+  analyze:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    needs: test  # Run after tests complete
+    
+    permissions:
+      security-events: write  # Required to upload results to Security tab
+    
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Step 2: Initialize CodeQL for JavaScript
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+      
+      # Step 3: Let CodeQL analyze the code
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      
+      # Step 4: Run security queries and upload results
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
