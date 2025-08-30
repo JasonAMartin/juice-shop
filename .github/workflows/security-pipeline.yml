@@ -36,7 +36,7 @@ jobs:
       
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: npm ci  # Using 'ci' instead of 'install' for faster, reproducible builds
+        run: npm install  # No package.lock in this app so not using ci. Using 'ci' instead of 'install' for faster, reproducible builds
         # npm ci is preferred in CI/CD because:
         # - It's faster (skips some checks)
         # - Installs from package-lock.json exactly (no version range resolution)
