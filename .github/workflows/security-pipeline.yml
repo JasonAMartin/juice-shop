@@ -1,0 +1,58 @@
+# Workflow name - appears in the Actions tab of your GitHub repo
+name: Security Pipeline
+
+# Event triggers - defines when this workflow runs
+on:
+  push:
+    branches:
+      - master  # Only trigger on pushes to master branch
+      # Note: GitHub now defaults to 'main' for new repos, verify your branch name
+
+# Jobs define the work to be done
+jobs:
+  # Job identifier - you can name this anything (alphanumeric + hyphens/underscores)
+  test:
+    # Runner environment - the virtual machine type GitHub provides
+    runs-on: ubuntu-latest  # You could also use windows-latest or macos-latest
+    
+    # Strategy for matrix builds (optional for now, but useful to know)
+    # strategy:
+    #   matrix:
+    #     node-version: [18.x, 20.x]  # Test against multiple Node versions
+    
+    # Sequential steps that execute in this job
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4  # This is a pre-built action from GitHub
+        # By default, this checks out the ref/SHA that triggered the workflow
+        
+      # Step 2: Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # Specify your Node version
+          # cache: 'npm'  # Uncomment to cache npm dependencies for faster builds
+      
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci  # Using 'ci' instead of 'install' for faster, reproducible builds
+        # npm ci is preferred in CI/CD because:
+        # - It's faster (skips some checks)
+        # - Installs from package-lock.json exactly (no version range resolution)
+        # - Fails if package-lock.json doesn't match package.json
+      
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm run test
+        # Optional: Set environment variables if your tests need them
+        # env:
+        #   CI: true  # Many test runners detect this and adjust behavior
+      
+      # Optional: Upload test results or coverage reports
+      # - name: Upload coverage reports
+      #   if: always()  # Run even if tests fail
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: coverage-report
+      #     path: coverage/
